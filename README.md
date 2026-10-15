@@ -61,6 +61,16 @@ See [the C++23 implementation guide](cpp23/README.md) for modules, configuration
 
 An initial C++23 desktop application shell is available in [`mlta-studio/`](mlta-studio/README.md). It includes an optional Qt 6 Widgets UI with a project explorer, source editor, logic outline, diagnostics pane, menus, toolbar, and status footer. The parser/runtime and editable logic graph are planned follow-up milestones; see the project README for current scope and build instructions.
 
+## MLTA UML Studio — Browser Diagram Editor
+
+A static, browser-based UML editor prototype with a UML shape palette, movable elements, relationships, a properties inspector, undo/redo, local saving, and SVG/JSON import/export.
+
+- [Open UML Studio source](uml-studio/index.html)
+- [UML Studio documentation](uml-studio/README.md)
+- [JavaScript syntax check and GitHub Pages workflow](.github/workflows/mlta-uml-studio.yml)
+
+The workflow validates the app and attempts to publish the `uml-studio/` folder to GitHub Pages on pushes to `main`. GitHub Pages must be enabled for the repository for the deployment job to succeed.
+
 ## MLTA Studio — Engine, Components, and API
 
 MLTA Studio now includes an initial C++23 expression engine, typed values and logic nodes, a component/field catalog, toolbox metadata, an in-process API router, an OpenAPI contract, and unit tests. See [MLTA Studio](mlta-studio/README.md), [component/API catalog](mlta-studio/docs/COMPONENT_CATALOG_AND_API.md), and [OpenAPI](mlta-studio/api/openapi.yaml). The router is transport-neutral; a real HTTP server and production security middleware are not included yet.
