@@ -2,6 +2,7 @@
 #include "mlta/diagnostic.hpp"
 #include "mlta/logic_node.hpp"
 #include <cstddef>
+#include <functional>
 #include <map>
 #include <string>
 #include <string_view>
