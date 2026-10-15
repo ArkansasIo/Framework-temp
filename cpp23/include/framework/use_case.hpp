@@ -1,7 +1,7 @@
 #pragma once
 #include "framework/result.hpp"
+#include <any>
 #include <functional>
-#include <string>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
@@ -24,8 +24,7 @@ public:
         if (it == handlers_.end())
             return Result<Response>::failure({ErrorCode::not_found, "Use case handler is not registered."});
         try {
-            const auto result = it->second(&command);
-            return Result<Response>::success(std::any_cast<Response>(result));
+            return Result<Response>::success(std::any_cast<Response>(it->second(&command)));
         } catch (const std::bad_any_cast&) {
             return Result<Response>::failure({ErrorCode::internal, "Use case response type mismatch."});
         }
