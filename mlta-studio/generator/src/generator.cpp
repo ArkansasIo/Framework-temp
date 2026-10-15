@@ -12,7 +12,7 @@ bool writeFile(const std::filesystem::path& p,const std::string& c){std::ofstrea
 GenerateResult generateApiApplication(const ApplicationSpec& spec,const std::filesystem::path& destination){
  GenerateResult r;
  if(!validSlug(spec.slug)){r.diagnostics.error("E_PROJECT_SLUG","Project slug must contain only letters, digits, hyphens, and underscores (max 64 characters)");return r;}
- if(spec.name.empty()||spec.version.empty()){r.diagnostics.error("E_PROJECT_METADATA","Project name and version are required");return r;}
+ if(spec.name.empty()||!validVersion(spec.version)){r.diagnostics.error("E_PROJECT_METADATA","Project name and version are required");return r;}
  for(const auto& e:spec.endpoints){if(e.method!="GET"&&e.method!="POST"&&e.method!="PUT"&&e.method!="PATCH"&&e.method!="DELETE"){r.diagnostics.error("E_HTTP_METHOD","Unsupported HTTP method: "+e.method);return r;}if(e.path.empty()||e.path.front()!='/'){r.diagnostics.error("E_ROUTE_PATH","API route paths must start with '/'");return r;}}
  try{
   r.projectDirectory=destination/spec.slug;
