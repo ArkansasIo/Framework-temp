@@ -32,6 +32,8 @@ void test_validation() {
     const auto valid = framework::require_non_empty_string("hello", "name");
     check(valid && valid.value() == "hello", "non-empty string is accepted");
     check(!framework::require_non_empty_string("", "name"), "empty string is rejected");
+    const auto trimmed = framework::require_non_empty_string("  hello  ", "name");
+    check(trimmed && trimmed.value() == "hello", "string validation trims surrounding whitespace");
     check(!framework::require_non_empty_string("toolong", "name", 3), "overlong string is rejected");
     check(!framework::require_non_empty_string("bad\nvalue", "name"), "control characters are rejected");
 }
