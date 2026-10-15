@@ -1,8 +1,10 @@
 #pragma once
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <string>
 #include <variant>
+#include <utility>
 #include <vector>
 namespace mlta {
 struct Value {
