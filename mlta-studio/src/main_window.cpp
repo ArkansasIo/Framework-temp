@@ -1,4 +1,6 @@
 #include "mlta_studio/main_window.hpp"
+#include "mlta/engine.hpp"
+#include "mlta_studio/catalog.hpp"
 
 #include <QAction>
 #include <QApplication>
@@ -84,17 +86,30 @@ void MainWindow::createActions() {
             statusBar()->showMessage("Validation failed", 3000);
             return;
         }
-        // Initial shell validation only. The MLTA parser/type system will replace this check.
-        appendDiagnostic("Basic validation passed. Full parser integration is not implemented yet.");
-        statusBar()->showMessage("Basic validation passed", 3000);
+        const mlta::MLTAEngine engine;
+        const auto result = engine.validate(source.toStdString());
+        appendDiagnostic(result.valid ? "Validation passed." : "Validation failed.");
+        for (const auto& diagnostic : result.diagnostics.entries) {
+            appendDiagnostic(QString::fromStdString(diagnostic.code + ": " + diagnostic.message));
+        }
+        statusBar()->showMessage(result.valid ? "Validation passed" : "Validation failed", 3000);
     });
     addAction(validateAction);
 
     auto* runAction = new QAction("Run", this);
     runAction->setShortcut(QKeySequence("F5"));
     connect(runAction, &QAction::triggered, this, [this] {
-        appendDiagnostic("Execution is not connected yet. Next step: MLTAEngine::execute().");
-        statusBar()->showMessage("Execution engine not connected", 3000);
+        const mlta::MLTAEngine engine;
+        const auto result = engine.execute(editor_->toPlainText().toStdString());
+        appendDiagnostic(result.success ? "Execution succeeded." : "Execution failed.");
+        appendDiagnostic("Instructions used: " + QString::number(static_cast<qulonglong>(result.instructionsUsed)));
+        if (const auto* booleanValue = std::get_if<bool>(&result.value.data)) appendDiagnostic(*booleanValue ? "Result: true" : "Result: false");
+        else if (const auto* integerValue = std::get_if<std::int64_t>(&result.value.data)) appendDiagnostic("Result: " + QString::number(static_cast<qlonglong>(*integerValue)));
+        else if (const auto* floatValue = std::get_if<double>(&result.value.data)) appendDiagnostic("Result: " + QString::number(*floatValue));
+        else if (const auto* stringValue = std::get_if<std::string>(&result.value.data)) appendDiagnostic("Result: " + QString::fromStdString(*stringValue));
+        for (const auto& line : result.trace) appendDiagnostic("Trace: " + QString::fromStdString(line));
+        for (const auto& diagnostic : result.diagnostics.entries) appendDiagnostic(QString::fromStdString(diagnostic.code + ": " + diagnostic.message));
+        statusBar()->showMessage(result.success ? "Execution succeeded" : "Execution failed", 3000);
     });
     addAction(runAction);
 }
