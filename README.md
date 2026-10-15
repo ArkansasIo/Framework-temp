@@ -44,7 +44,7 @@ cmake --build build/cpp23 --config Release
 ctest --test-dir build/cpp23 --output-on-failure
 ```
 
-See [the C++23 implementation guide](cpp23/README.md) for modules, configuration keys, and design boundaries.
+See [the C++23 implementation guide](cpp23/README.md) for modules, configuration keys, and design boundaries. The [algorithm implementation matrix](docs/algorithm-implementation-matrix.md) separates implemented primitives from specification-only algorithms and provider-specific integrations.
 
 ## Engineering rules
 
