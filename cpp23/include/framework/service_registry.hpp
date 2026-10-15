@@ -2,6 +2,7 @@
 #include "framework/result.hpp"
 #include <memory>
 #include <mutex>
+#include <type_traits>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
