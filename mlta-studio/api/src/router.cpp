@@ -1,6 +1,8 @@
 #include "mlta/api/router.hpp"
 #include <sstream>
 #include <string>
+#include <string_view>
+#include <utility>
 namespace mlta::api { namespace {
 std::string esc(std::string_view s){std::string o;for(char c:s){switch(c){case '"':o+="\\\"";break;case '\\':o+="\\\\";break;case '\n':o+="\\n";break;case '\r':o+="\\r";break;case '\t':o+="\\t";break;default:if(static_cast<unsigned char>(c)<0x20U)o+=' ';else o+=c;}}return o;}
 std::string diagnostics(const mlta::Diagnostics& ds){std::ostringstream o;o<<'[';bool first=true;for(const auto&d:ds.entries){if(!first)o<<',';first=false;const char*s=d.severity==mlta::Severity::Error?"error":d.severity==mlta::Severity::Warning?"warning":"info";o<<"{\"severity\":\""<<s<<"\",\"code\":\""<<esc(d.code)<<"\",\"message\":\""<<esc(d.message)<<"\",\"line\":"<<d.line<<",\"column\":"<<d.column<<'}';}o<<']';return o.str();}
