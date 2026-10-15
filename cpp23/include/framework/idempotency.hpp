@@ -12,7 +12,7 @@ public:
         if (principal.empty() || key.empty() || fingerprint.empty())
             return Result<Entry>::failure({ErrorCode::validation, "Principal, key, and fingerprint are required."});
         std::lock_guard lock(mutex_);
-        const auto compound = principal + "\n" + key;
+        const auto compound = make_key(principal, key);
         const auto it = entries_.find(compound);
         if (it != entries_.end()) {
             if (it->second.fingerprint != fingerprint)
@@ -26,7 +26,7 @@ public:
     [[nodiscard]] Result<bool> complete(std::string principal, std::string key,
                                         std::string fingerprint, std::string result) {
         std::lock_guard lock(mutex_);
-        const auto it = entries_.find(principal + "\n" + key);
+        const auto it = entries_.find(make_key(principal, key));
         if (it == entries_.end() || it->second.fingerprint != fingerprint)
             return Result<bool>::failure({ErrorCode::not_found, "Idempotency reservation not found."});
         it->second.result = std::move(result);
@@ -34,6 +34,9 @@ public:
         return Result<bool>::success(true);
     }
 private:
+    [[nodiscard]] static std::string make_key(const std::string& principal, const std::string& key) {
+        return std::to_string(principal.size()) + ":" + principal + key;
+    }
     std::mutex mutex_;
     std::unordered_map<std::string, Entry> entries_;
 };
