@@ -1,5 +1,6 @@
 #pragma once
 #include "framework/result.hpp"
+#include <functional>
 #include <map>
 #include <string>
 #include <string_view>
