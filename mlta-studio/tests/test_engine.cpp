@@ -15,5 +15,17 @@ int main(){
  response=router.handle({"POST","/v1/validate",{},"add(1, 2)"});assert(response.status==200);
  response=router.handle({"POST","/v1/execute",{},"add(1, 2)"});assert(response.status==200);
  response=router.handle({"DELETE","/unknown",{}, {}});assert(response.status==404);
+ auto root=std::filesystem::temp_directory_path()/"mlta-generator-test";
+ std::filesystem::remove_all(root);
+ mlta::generator::ApplicationSpec spec;
+ spec.name="Inventory API";spec.slug="inventory-api";spec.version="1.0.0";
+ spec.endpoints={{"GET","/health","Health check"},{"GET","/v1/items","List items"}};
+ auto generated=mlta::generator::generateApiApplication(spec,root);
+ assert(generated.success&&generated.files.size()==4);
+ assert(std::filesystem::exists(root/"inventory-api"/"api"/"openapi.yaml"));
+ spec.slug="../bad";
+ auto rejected=mlta::generator::generateApiApplication(spec,root);
+ assert(!rejected.success&&rejected.diagnostics.hasErrors());
+ std::filesystem::remove_all(root);
  std::cout<<"MLTA engine tests passed\n";
 }
