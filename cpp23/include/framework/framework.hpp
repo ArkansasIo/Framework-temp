@@ -6,6 +6,7 @@
 #include "framework/circuit_breaker.hpp"
 #include "framework/clock.hpp"
 #include "framework/config.hpp"
+#include "framework/dependency_graph.hpp"
 #include "framework/event_bus.hpp"
 #include "framework/health.hpp"
 #include "framework/http.hpp"
