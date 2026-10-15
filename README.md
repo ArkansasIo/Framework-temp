@@ -61,6 +61,10 @@ See [the C++23 implementation guide](cpp23/README.md) for modules, configuration
 
 An initial C++23 desktop application shell is available in [`mlta-studio/`](mlta-studio/README.md). It includes an optional Qt 6 Widgets UI with a project explorer, source editor, logic outline, diagnostics pane, menus, toolbar, and status footer. The parser/runtime and editable logic graph are planned follow-up milestones; see the project README for current scope and build instructions.
 
+## MLTA Studio — Engine, Components, and API
+
+MLTA Studio now includes an initial C++23 expression engine, typed values and logic nodes, a component/field catalog, toolbox metadata, an in-process API router, an OpenAPI contract, and unit tests. See [MLTA Studio](mlta-studio/README.md), [component/API catalog](mlta-studio/docs/COMPONENT_CATALOG_AND_API.md), and [OpenAPI](mlta-studio/api/openapi.yaml). The router is transport-neutral; a real HTTP server and production security middleware are not included yet.
+
 ## MLTA Application Engine UML
 
 The UML design for the C++23 application shell is available in [docs/uml](docs/uml/README.md). It covers the application core, public API, header/menu/toolbar GUI shell, navigation, pages and subpages, workspace planes, persistence, plugins, and command dispatch.
