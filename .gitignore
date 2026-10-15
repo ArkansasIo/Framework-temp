@@ -6,3 +6,4 @@ coverage/
 !.env.example
 *.log
 .DS_Store
+\nbuild/\ncmake-build-*/\nCMakeFiles/\nCMakeCache.txt\nTesting/\n
