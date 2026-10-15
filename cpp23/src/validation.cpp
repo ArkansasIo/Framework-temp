@@ -1,11 +1,18 @@
 #include "framework/validation.hpp"
 
+#include <cctype>
+
 namespace framework {
 
 Result<std::string> require_non_empty_string(
     std::string_view value,
     std::string_view field_name,
     std::size_t max_length) {
+    while (!value.empty() && std::isspace(static_cast<unsigned char>(value.front())) != 0)
+        value.remove_prefix(1);
+    while (!value.empty() && std::isspace(static_cast<unsigned char>(value.back())) != 0)
+        value.remove_suffix(1);
+
     if (value.empty() || value.size() > max_length) {
         return Result<std::string>::failure({
             ErrorCode::validation,
