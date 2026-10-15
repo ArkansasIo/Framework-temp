@@ -2,7 +2,6 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <string>
 
 namespace {
 
@@ -48,10 +47,10 @@ void test_validation() {
 void test_lifecycle() {
     framework::Lifecycle lifecycle;
     check(lifecycle.state() == framework::LifecycleState::created, "lifecycle starts in created");
-    check(lifecycle.transition(framework::LifecycleState::starting), "created -> starting");
-    check(lifecycle.transition(framework::LifecycleState::ready), "starting -> ready");
-    check(lifecycle.transition(framework::LifecycleState::stopping), "ready -> stopping");
-    check(lifecycle.transition(framework::LifecycleState::stopped), "stopping -> stopped");
+    check(lifecycle.transition(framework::LifecycleState::starting).has_value(), "created -> starting");
+    check(lifecycle.transition(framework::LifecycleState::ready).has_value(), "starting -> ready");
+    check(lifecycle.transition(framework::LifecycleState::stopping).has_value(), "ready -> stopping");
+    check(lifecycle.transition(framework::LifecycleState::stopped).has_value(), "stopping -> stopped");
     check(!lifecycle.transition(framework::LifecycleState::ready), "stopped cannot return to ready");
 }
 
