@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(FRAMEWORK_BUILD_TESTS "Build framework tests" ON)
+option(FRAMEWORK_BUILD_EXAMPLES "Build framework examples" ON)
 
 add_library(framework_core
     src/config.cpp
@@ -19,6 +20,11 @@ if(MSVC)
     target_compile_options(framework_core PRIVATE /W4 /permissive-)
 else()
     target_compile_options(framework_core PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+endif()
+
+if(FRAMEWORK_BUILD_EXAMPLES)
+    add_executable(framework_basic_example examples/basic_application.cpp)
+    target_link_libraries(framework_basic_example PRIVATE framework_core)
 endif()
 
 if(FRAMEWORK_BUILD_TESTS)
