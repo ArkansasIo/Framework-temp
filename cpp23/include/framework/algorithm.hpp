@@ -1,6 +1,6 @@
 #pragma once
 #include <algorithm>
-#include <cstddef>
+#include <iterator>
 #include <vector>
 namespace framework {
 template <typename T, typename Predicate>
