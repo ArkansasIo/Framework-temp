@@ -1,7 +1,7 @@
 #pragma once
+#include "framework/config.hpp"
 #include <string_view>
 namespace framework {
-enum class LogLevel { debug, info, warn, error };
 class Logger {
 public:
     virtual ~Logger() = default;
