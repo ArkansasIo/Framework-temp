@@ -125,6 +125,37 @@ void test_health_metrics_and_rate_limit() {
     check(bucket.try_consume() && bucket.try_consume(), "token bucket permits capacity");
     check(!bucket.try_consume(), "token bucket rejects over-capacity request");
 }
+void test_dependency_graph_and_registries() {
+    const framework::DependencyGraph graph{
+        {"database", "service", "api"},
+        {{"database", "service"}, {"service", "api"}}
+    };
+    const auto order = framework::resolve_dependencies(graph);
+    check(order && order.value().front() == "database" && order.value().back() == "api",
+          "dependency graph resolves topological order");
+    const framework::DependencyGraph cycle{{"a", "b"}, {{"a", "b"}, {"b", "a"}}};
+    check(!framework::resolve_dependencies(cycle), "dependency graph rejects cycles");
+
+    struct Greeter { virtual ~Greeter() = default; virtual std::string greet() const = 0; };
+    struct EnglishGreeter final : Greeter { std::string greet() const override { return "hello"; } };
+    framework::ServiceRegistry services;
+    check(services.add<Greeter>(std::make_shared<EnglishGreeter>()).has_value(),
+          "service registry accepts implementation");
+    const auto greeter = services.get<Greeter>();
+    check(greeter && greeter.value()->greet() == "hello", "service registry resolves interface");
+    check(!services.add<Greeter>(std::make_shared<EnglishGreeter>()),
+          "service registry rejects duplicate registration");
+
+    struct AddOne { int value; };
+    framework::UseCaseRegistry use_cases;
+    check(use_cases.add<AddOne, int>([](const AddOne& command) { return command.value + 1; }).has_value(),
+          "use case handler registers");
+    const auto response = use_cases.execute<AddOne, int>(AddOne{41});
+    check(response && response.value() == 42, "use case registry dispatches typed command");
+    check(!use_cases.execute<struct MissingCommand, int>({}),
+          "missing use case returns error");
+}
+
 void test_idempotency_and_application() {
     framework::IdempotencyStore store;
     const auto first = store.reserve("user", "key-1", "fingerprint-a");
@@ -161,6 +192,7 @@ int main() {
     test_retry_and_circuit_breaker();
     test_health_metrics_and_rate_limit();
     test_idempotency_and_application();
+    test_dependency_graph_and_registries();
     if (failures != 0) {
         std::cerr << failures << " test(s) failed.\n";
         return EXIT_FAILURE;
