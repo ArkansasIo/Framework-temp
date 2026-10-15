@@ -1,32 +1,30 @@
 # Universal Application Framework Template
 
-A reusable, language-independent application architecture and algorithm catalog, with a TypeScript reference implementation.
+A reusable, language-independent application architecture and algorithm catalog, with TypeScript and native C++23 reference implementations.
 
 ## Goals
 
 - Standardize application lifecycle, configuration, errors, validation, persistence boundaries, API processing, security, testing, and release operations.
 - Keep domain logic independent from UI, HTTP transport, and storage providers.
-- Document algorithms in `.alg` files and provide executable TypeScript foundations.
+- Document algorithms in `.alg` files and provide executable TypeScript and C++23 foundations.
 - Support web, desktop, mobile, CLI, and service applications through optional adapters.
 
 ## Repository status
 
-This repository starts as a template. Algorithm specifications are reference designs; each production integration must supply its concrete database, identity provider, transport, deployment environment, and tests.
+This repository is a framework template. Algorithm specifications are reference designs; each production integration must supply its concrete database, identity provider, transport, deployment environment, and tests.
 
 ## Structure
 
 - `algorithms/`: language-neutral algorithm specifications.
 - `src/`: TypeScript reference primitives.
-- `tests/`: automated tests.
+- `tests/`: TypeScript automated tests.
+- `cpp23/`: native C++23 library, CMake build, core headers, implementations, and tests.
 - `docs/`: architecture and implementation guidance.
-- `.github/workflows/`: CI checks.
+- `.github/workflows/`: CI checks for TypeScript and C++23.
 
-## Requirements
+## TypeScript requirements and commands
 
-- Node.js 20 or newer
-- npm 10 or newer
-
-## Commands
+Requirements: Node.js 20 or newer, npm 10 or newer.
 
 ```sh
 npm install
@@ -34,6 +32,18 @@ npm run typecheck
 npm test
 npm run build
 ```
+
+## C++23 requirements and commands
+
+Requirements: CMake 3.25+ and a C++23-capable compiler (GCC 13+, Clang 16+, or a recent Visual Studio 2022 toolset).
+
+```sh
+cmake -S cpp23 -B build/cpp23 -DCMAKE_BUILD_TYPE=Release
+cmake --build build/cpp23 --config Release
+ctest --test-dir build/cpp23 --output-on-failure
+```
+
+See [the C++23 implementation guide](cpp23/README.md) for modules, configuration keys, and design boundaries.
 
 ## Engineering rules
 
