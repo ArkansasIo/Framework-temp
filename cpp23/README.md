@@ -24,8 +24,11 @@ ctest --test-dir build/cpp23 --output-on-failure
 - `include/framework/config.hpp`, `src/config.cpp`: validated application configuration
 - `include/framework/lifecycle.hpp`, `src/lifecycle.cpp`: explicit lifecycle state machine
 - `include/framework/validation.hpp`, `src/validation.cpp`: reusable string validation
+- `include/framework/dependency_graph.hpp`: topological dependency ordering and cycle detection
+- `include/framework/service_registry.hpp`: typed service registration and lookup
+- `include/framework/use_case.hpp`: typed command-to-handler dispatch
 - `include/framework/application.hpp`: lifecycle hook orchestration
-- `include/framework/http.hpp`, `router.hpp`, `pipeline.hpp`: transport-neutral request routing and limits
+- `include/framework/http.hpp`, `router.hpp`, `pipeline.hpp`, `response_mapping.hpp`: transport-neutral request routing, size limits, and safe errors
 - `include/framework/security.hpp`, `response_mapping.hpp`: deny-by-default permissions and safe error mapping
 - `include/framework/repository.hpp`: storage adapter contract
 - `include/framework/event_bus.hpp`: typed in-process event dispatch
@@ -51,6 +54,10 @@ The current configuration API accepts a map so callers can adapt environment var
 ## Example
 
 CMake builds `framework_basic_example` by default. It demonstrates startup hooks, a health route, request dispatch, and shutdown.
+
+## Available modules
+
+The umbrella header `framework/framework.hpp` exports the public C++23 headers. See the root `ALGORITHM_CATALOG.md` and `docs/` for the language-neutral specifications, security rules, API contracts, test strategy, and release guidance.
 
 ## Design boundaries
 
