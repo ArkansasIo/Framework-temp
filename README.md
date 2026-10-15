@@ -29,7 +29,7 @@ This repository starts as a template. Algorithm specifications are reference des
 ## Commands
 
 ```sh
-npm ci
+npm install
 npm run typecheck
 npm test
 npm run build
