@@ -32,6 +32,10 @@ eq("ready", "ready")
 
 Initial operations: add, sub, mul, div, gt, lt, eq, and, or, not, concat. Variables can be supplied through the engine execution context.
 
+## API project generator
+
+The `mlta::generator::generateApiApplication` function writes a starter C++23 API project, CMake file, README, and OpenAPI 3.1 contract from an application specification. See [Project Generator](docs/PROJECT_GENERATOR.md). Project slugs and route methods are validated. The generated output is a starter, not a running HTTP server.
+
 ## API
 
 See [OpenAPI contract](api/openapi.yaml) and [component catalog](docs/COMPONENT_CATALOG_AND_API.md).
