@@ -18,8 +18,9 @@ This repository is a framework template. Algorithm specifications are reference 
 - `algorithms/`: language-neutral algorithm specifications.
 - `src/`: TypeScript reference primitives.
 - `tests/`: TypeScript automated tests.
-- `cpp23/`: native C++23 library, CMake build, core headers, implementations, and tests.
-- `docs/`: architecture and implementation guidance.
+- `cpp23/`: native C++23 library, CMake build, reusable core headers, examples, and tests.
+- `docs/`: architecture, API contracts, testing, setup, release, and implementation guidance.
+- `CONTRIBUTING.md`, `SECURITY.md`, `CHANGELOG.md`: project maintenance and security policies.
 - `.github/workflows/`: CI checks for TypeScript and C++23.
 
 ## TypeScript requirements and commands
