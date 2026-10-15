@@ -22,4 +22,6 @@
 #include "framework/retry.hpp"
 #include "framework/router.hpp"
 #include "framework/security.hpp"
+#include "framework/service_registry.hpp"
+#include "framework/use_case.hpp"
 #include "framework/validation.hpp"
