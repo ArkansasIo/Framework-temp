@@ -56,6 +56,14 @@ See [the C++23 implementation guide](cpp23/README.md) for modules, configuration
 6. Test restore and rollback procedures; do not assume backups are valid.
 7. Treat production readiness as a measured outcome, not a checklist assertion.
 
+
+## MLTA Application Engine UML
+
+The UML design for the C++23 application shell is available in [docs/uml](docs/uml/README.md). It covers the application core, public API, header/menu/toolbar GUI shell, navigation, pages and subpages, workspace planes, persistence, plugins, and command dispatch.
+
+- [Class diagram source](docs/uml/MLTA_Application_Engine.puml)
+- [Navigation sequence diagram source](docs/uml/MLTA_Navigation_Sequence.puml)
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
