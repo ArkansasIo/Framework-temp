@@ -152,7 +152,8 @@ void test_dependency_graph_and_registries() {
           "use case handler registers");
     const auto response = use_cases.execute<AddOne, int>(AddOne{41});
     check(response && response.value() == 42, "use case registry dispatches typed command");
-    check(!use_cases.execute<struct MissingCommand, int>({}),
+    struct MissingCommand { int value; };
+    check(!use_cases.execute<MissingCommand, int>(MissingCommand{0}),
           "missing use case returns error");
 }
 
