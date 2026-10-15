@@ -221,6 +221,34 @@ void MainWindow::createWorkspace() {
     root->setStretchFactor(1, 1);
     root->setSizes({230, 1100});
     setCentralWidget(root);
+
+    auto* componentsDock = new QDockWidget("Components & Fields", this);
+    componentsDock->setObjectName("componentsFieldsDock");
+    auto* components = new QTreeWidget(componentsDock);
+    components->setHeaderLabels({"Component / Field", "Type"});
+    for (const auto& definition : componentCatalog()) {
+        auto* category = new QTreeWidgetItem(components, {QString::fromStdString(definition.category), ""});
+        auto* component = new QTreeWidgetItem(category, {QString::fromStdString(definition.name), QString::fromStdString(definition.description)});
+        for (const auto& field : definition.fields) {
+            auto* fieldItem = new QTreeWidgetItem(component, {QString::fromStdString(field.name), QString::fromStdString(field.type)});
+            fieldItem->setToolTip(0, QString::fromStdString(field.description));
+            if (field.required) fieldItem->setText(1, QString::fromStdString(field.type + " (required)"));
+        }
+        category->setExpanded(true);
+    }
+    componentsDock->setWidget(components);
+    addDockWidget(Qt::RightDockWidgetArea, componentsDock);
+
+    auto* toolsDock = new QDockWidget("Toolbox", this);
+    toolsDock->setObjectName("toolboxDock");
+    auto* tools = new QTreeWidget(toolsDock);
+    tools->setHeaderLabels({"Tool", "Shortcut"});
+    for (const auto& tool : toolCatalog()) {
+        auto* item = new QTreeWidgetItem(tools, {QString::fromStdString(tool.name), QString::fromStdString(tool.shortcut)});
+        item->setToolTip(0, QString::fromStdString(tool.description));
+    }
+    toolsDock->setWidget(tools);
+    addDockWidget(Qt::RightDockWidgetArea, toolsDock);
 }
 
 void MainWindow::createStatusArea() {
