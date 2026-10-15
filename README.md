@@ -57,6 +57,10 @@ See [the C++23 implementation guide](cpp23/README.md) for modules, configuration
 7. Treat production readiness as a measured outcome, not a checklist assertion.
 
 
+## MLTA Studio
+
+An initial C++23 desktop application shell is available in [`mlta-studio/`](mlta-studio/README.md). It includes an optional Qt 6 Widgets UI with a project explorer, source editor, logic outline, diagnostics pane, menus, toolbar, and status footer. The parser/runtime and editable logic graph are planned follow-up milestones; see the project README for current scope and build instructions.
+
 ## MLTA Application Engine UML
 
 The UML design for the C++23 application shell is available in [docs/uml](docs/uml/README.md). It covers the application core, public API, header/menu/toolbar GUI shell, navigation, pages and subpages, workspace planes, persistence, plugins, and command dispatch.
