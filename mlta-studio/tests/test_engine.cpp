@@ -1,5 +1,7 @@
 #include "mlta/engine.hpp"
 #include "mlta/api/router.hpp"
+#include "mlta/generator.hpp"
+#include <filesystem>
 #include <cassert>
 #include <iostream>
 int main(){
