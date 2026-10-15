@@ -1,39 +1,54 @@
 # MLTA Studio
 
-MLTA Studio is the first desktop application planned for the MLTAEngine: a C++23 development environment with a source editor, project explorer, visual logic outline, validation and execution entry points.
+MLTA Studio is a C++23 desktop development environment and application/API builder based on MLTAEngine.
 
-## Current implementation
+## Implemented foundation
 
-- Qt 6 Widgets desktop shell when Qt 6.4+ is installed.
-- File menu and keyboard shortcuts for opening and saving source text.
-- Main toolbar, project explorer, source editor, logic outline, diagnostics output, and status footer.
-- Basic empty-document validation and clearly marked runtime placeholders.
-- CLI bootstrap build when Qt is unavailable, so the project can still be configured and compiled.
+- Optional Qt 6 Widgets shell with project explorer, source editor, logic outline, diagnostics output, component/field catalog, toolbox, menus, toolbar, and status footer.
+- Engine library with typed values, logic nodes, expression parser/evaluator, variable context, diagnostics, execution trace, and configurable depth/instruction/source limits.
+- Transport-neutral API router for health, capabilities, validation, and execution.
+- Component/field catalog for application manifests, logic nodes, modules, classes, types, arrays, operations, functions, pages, widgets, data models, API endpoints, and plugins.
+- OpenAPI 3.1 contract and initial C++ unit/integration tests.
+- CLI bootstrap when Qt 6 is not installed.
 
-## Build
+## Build and test
 
-Requirements: CMake 3.25+ and a C++23-capable compiler. For the desktop interface, install Qt 6.4+ with the Widgets component.
+Requirements: CMake 3.25+ and a C++23-capable compiler. Qt 6.4+ with Widgets enables the GUI.
 
 ```sh
 cmake -S mlta-studio -B build/mlta-studio -DCMAKE_BUILD_TYPE=Release
 cmake --build build/mlta-studio --config Release
+ctest --test-dir build/mlta-studio --output-on-failure
 ```
 
-Run the executable:
+Example expressions (one expression per line):
 
-- Windows: `build\\mlta-studio\\Release\\mlta_studio.exe` (multi-config generators) or `build\\mlta-studio\\mlta_studio.exe`
-- Linux/macOS: `./build/mlta-studio/mlta_studio`
+```text
+add(2, 3)
+and(true, not(false))
+concat("MLTA ", "Studio")
+eq("ready", "ready")
+```
 
-If Qt is not found, CMake builds a CLI bootstrap and prints the dependency instructions.
+Initial operations: add, sub, mul, div, gt, lt, eq, and, or, not, concat. Variables can be supplied through the engine execution context.
 
-## Planned milestones
+## API
 
-1. **Engine integration:** connect MLTAEngine configuration, registry, context, parser, validation, planning, and execution.
-2. **Editable logic graph:** select, create, connect, reorder, and configure nodes with undo/redo.
-3. **Project model:** source files, modules, classes, types, arrays, and project settings.
-4. **Diagnostics:** source locations, severity levels, trace inspection, and resource-budget reporting.
-5. **Persistence and extensibility:** project serialization, settings, plugin API, automated tests, and packaged installers.
+See [OpenAPI contract](api/openapi.yaml) and [component catalog](docs/COMPONENT_CATALOG_AND_API.md).
 
-## Scope note
+- `GET /health`
+- `GET /v1/capabilities`
+- `POST /v1/validate` — body is MLTA expression source as text
+- `POST /v1/execute` — body is MLTA expression source as text
 
-This is an initial application shell, not a completed IDE. The parser, graph editing, full validation, execution runtime, project persistence, and plugin loading remain future milestones.
+The C++ router is an in-process request handler, **not a network HTTP server**. Before network exposure, add a real HTTP adapter plus authentication/authorization, TLS, rate limiting, request limits, and audit logging.
+
+## Planned next milestones
+
+1. Full grammar with declarations, branch/control-flow semantics, functions, modules, and static type checking.
+2. Editable graph canvas, selection/connectors, property inspector, undo/redo, and data binding.
+3. Project manifest schema, project templates, file generation, and persistence.
+4. Real HTTP transport adapter, middleware, auth policies, and API integration tests.
+5. Debugger, breakpoints, profiler, plugin sandbox/permissions, and platform installers.
+
+This is an initial implementation foundation, not a finished production IDE or public network API service.
