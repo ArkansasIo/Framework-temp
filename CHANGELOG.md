@@ -3,6 +3,7 @@
 All notable changes to this project are documented here.
 
 ## Unreleased
+- Harden TypeScript environment configuration parsing and expand validation tests.
 - Added language-neutral application algorithm catalog.
 - Added TypeScript reference primitives and automated tests.
 - Added C++23 framework primitives for lifecycle, configuration, validation, routing, request limits, service registration, use-case dispatch, dependency ordering, event handling, resilience, pagination, health, metrics, audit contracts, and idempotency.
