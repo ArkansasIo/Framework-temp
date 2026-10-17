@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "UML Meta Studio Language Registry",
+  "purpose": "Language-independent programming model and code-generation target registry.",
+  "languages": [
+    {"id":"typescript","name":"TypeScript","extension":"ts","paradigms":["object-oriented","functional","generic"],"supports":["classes","interfaces","generics","async","modules"]},
+    {"id":"javascript","name":"JavaScript","extension":"js","paradigms":["object-oriented","functional"],"supports":["classes","modules","async"]},
+    {"id":"cpp","name":"C++","extension":"cpp","paradigms":["object-oriented","generic","systems"],"supports":["classes","templates","interfaces-by-contract","modules","exceptions"]},
+    {"id":"csharp","name":"C#","extension":"cs","paradigms":["object-oriented","functional","generic"],"supports":["classes","interfaces","generics","async","records"]},
+    {"id":"java","name":"Java","extension":"java","paradigms":["object-oriented","generic"],"supports":["classes","interfaces","generics","modules","exceptions"]},
+    {"id":"python","name":"Python","extension":"py","paradigms":["object-oriented","functional","dynamic"],"supports":["classes","async","modules","decorators"]},
+    {"id":"rust","name":"Rust","extension":"rs","paradigms":["systems","functional","generic"],"supports":["structs","traits","generics","async","pattern-matching"]},
+    {"id":"go","name":"Go","extension":"go","paradigms":["procedural","concurrent"],"supports":["structs","interfaces","goroutines","modules"]},
+    {"id":"kotlin","name":"Kotlin","extension":"kt","paradigms":["object-oriented","functional","generic"],"supports":["classes","interfaces","coroutines","null-safety"]},
+    {"id":"swift","name":"Swift","extension":"swift","paradigms":["object-oriented","protocol-oriented","functional"],"supports":["structs","protocols","async","generics"]},
+    {"id":"lua","name":"Lua","extension":"lua","paradigms":["procedural","functional","dynamic"],"supports":["tables","modules","coroutines"]},
+    {"id":"sql","name":"SQL","extension":"sql","paradigms":["declarative"],"supports":["schemas","queries","views","procedures"]}
+  ],
+  "metaConstructs": [
+    "module","package","import","type","class","interface","struct","record","enum","alias",
+    "field","property","constant","function","method","constructor","parameter","variable",
+    "expression","assignment","condition","switch","loop","foreach","return","throw","try",
+    "event","callback","async","await","generic","constraint","annotation","attribute","query"
+  ]
+}
