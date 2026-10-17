@@ -1,5 +1,4 @@
-import type { MetaFunction, MetaProgram, MetaStatement, MetaType, TypeRef } from "./language.js";
-import { typeName } from "./language.js";
+import type { MetaExpression, MetaFunction, MetaProgram, MetaStatement, MetaType, TypeRef } from "./language.js";
 import type { MetaLanguageId } from "./language.js";
 
 export interface LanguageAdapter {
@@ -39,14 +38,7 @@ function makeAdapter(id: MetaLanguageId, extension: string, commentToken: string
   };
   const parameter = (name: string, ref: TypeRef): string => id === "python" ? `${name}: ${type(ref)}` : id === "go" ? `${name} ${type(ref)}` : `${type(ref)} ${name}`;
   const fn = (fn: MetaFunction, owner?: MetaType): string => emitFunction(id, fn, type, parameter, owner);
-  return {
-    id, extension,
-    comment: text => `${commentToken} ${text}`,
-    type,
-    parameter,
-    function: fn,
-    program: program => emitProgram(id, program, type, parameter)
-  };
+  return { id, extension, comment: text => `${commentToken} ${text}`, type, parameter, function: fn, program: program => emitProgram(id, program, type, parameter) };
 }
 
 function collectionName(id: MetaLanguageId): string {
@@ -88,18 +80,17 @@ function fieldLine(id: MetaLanguageId, field: MetaType["fields"][number], type: 
   return `${field.visibility ?? "public"} ${type(field.type)} ${field.name};`;
 }
 
-function emitFunction(id: MetaLanguageId, fn: MetaFunction, type: (t: TypeRef) => string, parameter: (n: string, t: TypeRef) => string, owner?: MetaType): string {
+function emitFunction(id: MetaLanguageId, fn: MetaFunction, type: (t: TypeRef) => string, parameter: (n: string, t: TypeRef) => string, _owner?: MetaType): string {
   const params = fn.parameters.map(p => parameter(p.name, p.type)).join(", ");
   const ret = type(fn.returnType);
   const prefix = fn.static ? "static " : "";
-  const name = fn.name;
   const body = fn.body.map(s => emitStatement(id, s, type)).join("\n");
-  if (id === "python") return `def ${name}(${params}):\n${indent(body || "pass")}\n`;
-  if (id === "rust") return `${prefix}fn ${name}(${params}) -> ${ret} {\n${indent(body)}\n}`;
-  if (id === "go") return `func ${name}(${params}) ${ret} {\n${indent(body)}\n}`;
-  if (id === "lua") return `function ${name}(${fn.parameters.map(p => p.name).join(", ")})\n${indent(body)}\nend`;
-  if (id === "sql") return `-- UML function ${name}\n`;
-  return `${prefix}${ret} ${name}(${params}) {\n${indent(body)}\n}`;
+  if (id === "python") return `def ${fn.name}(${params}):\n${indent(body || "pass")}\n`;
+  if (id === "rust") return `${prefix}fn ${fn.name}(${params}) -> ${ret} {\n${indent(body)}\n}`;
+  if (id === "go") return `func ${fn.name}(${params}) ${ret} {\n${indent(body)}\n}`;
+  if (id === "lua") return `function ${fn.name}(${fn.parameters.map(p => p.name).join(", ")})\n${indent(body)}\nend`;
+  if (id === "sql") return `-- UML function ${fn.name}\n`;
+  return `${prefix}${ret} ${fn.name}(${params}) {\n${indent(body)}\n}`;
 }
 
 function emitStatement(id: MetaLanguageId, statement: MetaStatement, type: (t: TypeRef) => string): string {
@@ -109,8 +100,8 @@ function emitStatement(id: MetaLanguageId, statement: MetaStatement, type: (t: T
     case "expression": return `${emitExpression(id, statement.expression)}${id === "python" || id === "lua" ? "" : ";"}`;
     case "return": return `return${statement.expression ? ` ${emitExpression(id, statement.expression)}` : ""}${id === "python" || id === "lua" ? "" : ";"}`;
     case "throw": return `${id === "python" ? "raise" : "throw"} ${emitExpression(id, statement.expression)}${id === "python" || id === "lua" ? "" : ";"}`;
-    case "if": return `if (${emitExpression(id, statement.condition)}) {\n${indent((statement.body ?? []).map(s => emitStatement(id, s, type)).join("\n"))}\n}`;
-    case "while": return `while (${emitExpression(id, statement.condition)}) {\n${indent((statement.body ?? []).map(s => emitStatement(id, s, type)).join("\n"))}\n}`;
+    case "if": return id === "python" ? `if ${emitExpression(id, statement.condition)}:\n${indent((statement.body ?? []).map(s => emitStatement(id, s, type)).join("\n"))}` : `if (${emitExpression(id, statement.condition)}) {\n${indent((statement.body ?? []).map(s => emitStatement(id, s, type)).join("\n"))}\n}`;
+    case "while": return id === "python" ? `while ${emitExpression(id, statement.condition)}:\n${indent((statement.body ?? []).map(s => emitStatement(id, s, type)).join("\n"))}` : `while (${emitExpression(id, statement.condition)}) {\n${indent((statement.body ?? []).map(s => emitStatement(id, s, type)).join("\n"))}\n}`;
     case "block": return `{\n${indent((statement.body ?? []).map(s => emitStatement(id, s, type)).join("\n"))}\n}`;
     case "break": return "break;";
     case "continue": return "continue;";
@@ -118,24 +109,21 @@ function emitStatement(id: MetaLanguageId, statement: MetaStatement, type: (t: T
   }
 }
 
-function emitExpression(id: MetaLanguageId, expression?: MetaExpression): string {
+function emitExpression(_id: MetaLanguageId, expression?: MetaExpression): string {
   if (!expression) return "undefined";
   switch (expression.kind) {
     case "literal": return typeof expression.value === "string" ? JSON.stringify(expression.value) : expression.value === undefined ? "undefined" : JSON.stringify(expression.value);
     case "variable": return expression.name ?? "undefined";
-    case "binary": return `(${emitExpression(id, expression.left)} ${expression.operator} ${emitExpression(id, expression.right)})`;
-    case "unary": return `${expression.operator ?? "!"}${emitExpression(id, expression.operand)}`;
-    case "call": return `${expression.name ?? "call"}(${(expression.arguments ?? []).map(a => emitExpression(id, a)).join(", ")})`;
-    case "member": return `${emitExpression(id, expression.target)}.${expression.name ?? "member"}`;
-    case "array": return `[${(expression.elements ?? []).map(a => emitExpression(id, a)).join(", ")}]`;
-    case "object": return `{ ${(Object.entries(expression.members ?? {})).map(([k, v]) => `${k}: ${emitExpression(id, v)}`).join(", ")} }`;
+    case "binary": return `(${emitExpression(_id, expression.left)} ${expression.operator} ${emitExpression(_id, expression.right)})`;
+    case "unary": return `${expression.operator ?? "!"}${emitExpression(_id, expression.operand)}`;
+    case "call": return `${expression.name ?? "call"}(${(expression.arguments ?? []).map(a => emitExpression(_id, a)).join(", ")})`;
+    case "member": return `${emitExpression(_id, expression.target)}.${expression.name ?? "member"}`;
+    case "array": return `[${(expression.elements ?? []).map(a => emitExpression(_id, a)).join(", ")}]`;
+    case "object": return `{ ${(Object.entries(expression.members ?? {})).map(([k, v]) => `${k}: ${emitExpression(_id, v)}`).join(", ")} }`;
   }
 }
 
-function globalLine(id: MetaLanguageId, field: MetaProgram["globals"][number], type: (t: TypeRef) => string): string {
-  if (id === "python") return `${field.name}: ${type(field.type)}`;
-  return `${type(field.type)} ${field.name};`;
-}
+function globalLine(id: MetaLanguageId, field: MetaProgram["globals"][number], type: (t: TypeRef) => string): string { return id === "python" ? `${field.name}: ${type(field.type)}` : `${type(field.type)} ${field.name};`; }
 function importLine(id: MetaLanguageId, value: string): string {
   if (id === "python") return `import ${value}`;
   if (id === "cpp") return `#include <${value}>`;
