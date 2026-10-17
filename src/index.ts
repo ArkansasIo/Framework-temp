@@ -21,3 +21,6 @@ export * from "./ai/openai-compatible-provider.js";
 export * from "./ai/workspace-tools.js";
 export * from "./ai/runtime.js";
 export * from "./uml/model.js";
+export * from "./uml/language.js";
+export * from "./uml/logic.js";
+export * from "./uml/codegen.js";
