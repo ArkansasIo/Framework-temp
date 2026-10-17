@@ -1,0 +1,2 @@
+export interface WorkflowStep<T=unknown>{id:string;run:(input:T)=>Promise<T>|T}
+export class Workflow<T=unknown>{private steps:WorkflowStep<T>[]=[]; add(step:WorkflowStep<T>){if(this.steps.some(s=>s.id===step.id))throw new Error(`Duplicate step: ${step.id}`);this.steps.push(step);return this} async run(input:T):Promise<T>{let value=input;for(const step of this.steps)value=await step.run(value);return value} list(){return this.steps.map(s=>s.id)}}
