@@ -1,0 +1,11 @@
+import { promises as fs } from "node:fs";
+import { join, relative, resolve } from "node:path";
+import type { AgentTool, AgentToolContext } from "./agent.js";
+function safe(root:string,p:string){const r=resolve(root),t=resolve(r,p);if(t!==r&&!t.startsWith(r+"/"))throw new Error("Path outside workspace");return t}
+export function createWorkspaceTools(): AgentTool[] { return [
+ {name:"list_files",description:"List files in an approved workspace directory",async execute(input,ctx){const p=String((input as {path?:string})?.path??".");const dir=safe(ctx.workspaceRoot,p);return (await fs.readdir(dir,{withFileTypes:true})).map(e=>({name:e.name,type:e.isDirectory()?"directory":"file"}));}},
+ {name:"read_file",description:"Read an approved text file",async execute(input,ctx){const p=String((input as {path?:string})?.path??"");if(!p)throw new Error("path required");return fs.readFile(safe(ctx.workspaceRoot,p),"utf8");}},
+ {name:"write_file",description:"Write an approved workspace file",async execute(input,ctx){if(!ctx.allowWrites)throw new Error("Writes are disabled");const v=input as {path?:string;content?:string};if(!v.path)throw new Error("path required");const target=safe(ctx.workspaceRoot,v.path);await fs.mkdir(resolve(target,".."),{recursive:true});await fs.writeFile(target,v.content??"","utf8");return {path:relative(ctx.workspaceRoot,target),written:true};}},
+ {name:"search_files",description:"Search text recursively in workspace files",async execute(input,ctx){const q=String((input as {query?:string})?.query??"");if(!q)throw new Error("query required");const results:string[]=[];async function walk(dir:string){for(const e of await fs.readdir(dir,{withFileTypes:true})){if([".git","node_modules","dist","build"].includes(e.name))continue;const p=join(dir,e.name);if(e.isDirectory())await walk(p);else{try{if((await fs.readFile(p,"utf8")).includes(q))results.push(relative(ctx.workspaceRoot,p))}catch{}}}}await walk(ctx.workspaceRoot);return results;}},
+ {name:"run_command",description:"Run a shell command only when explicitly enabled",async execute(){throw new Error("Command execution requires an explicit host implementation and is disabled by the default provider");}}
+]; }

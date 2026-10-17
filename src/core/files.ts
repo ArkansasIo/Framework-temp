@@ -1,0 +1,3 @@
+import { promises as fs } from "node:fs";
+import { join } from "node:path";
+export class FileService { constructor(private readonly root:string){} private path(p:string){const root=join(this.root);const target=join(root,p);if(!target.startsWith(root))throw new Error("Invalid path");return target} async read(p:string){return fs.readFile(this.path(p),"utf8")} async write(p:string,data:string){const file=this.path(p);await fs.mkdir(join(file,".."),{recursive:true});await fs.writeFile(file,data,"utf8")} async exists(p:string){try{await fs.access(this.path(p));return true}catch{return false}} async list(p="."){return fs.readdir(this.path(p),{withFileTypes:true})} }
