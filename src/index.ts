@@ -20,3 +20,4 @@ export * from "./ai/agent.js";
 export * from "./ai/openai-compatible-provider.js";
 export * from "./ai/workspace-tools.js";
 export * from "./ai/runtime.js";
+export * from "./uml/model.js";
